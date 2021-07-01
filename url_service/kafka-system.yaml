@@ -36,4 +36,21 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 5
           successThreshold: 1
+        env:
+          - name: REDIS_HOST
+            valueFrom:
+              secretKeyRef:
+                name: redis
+                key: REDIS_HOST
+         - name: REDIS_PORT
+            valueFrom:
+              secretKeyRef:
+                name: redis
+                key: REDIS_PORT
+         - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis
+                key: REDIS_PASSWORD
+
 
