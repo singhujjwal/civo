@@ -30,7 +30,7 @@ urls = APIRouter()
 
 
 @urls.get('/ready/')
-async def get_long_url():
+async def get_readiness():
     return {"Hello": "Ready"}
 
 @urls.post('/', response_model=UrlOut, status_code=201)

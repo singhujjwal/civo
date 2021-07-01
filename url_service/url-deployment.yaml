@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: urlservice
-        image: singhujjwal/url-service:0.2
+        image: singhujjwal/url-service:0.3
         command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
         workingDir: /app/
         ports:
@@ -31,7 +31,7 @@ spec:
           protocol: TCP
         readinessProbe:
           httpGet:
-            path: /api/v1/urls/docs
+            path: /api/v1/urls/ready/
             port: 8000
           initialDelaySeconds: 5
           periodSeconds: 5

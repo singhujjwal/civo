@@ -32,3 +32,8 @@ export REDIS_PASSWORD=passwordlongone
 `source env.sh`
 `docker run --env REDIS_HOST --env REDIS_PORT --env REDIS_PASSWORD -it --rm --name urls -w /app -p 8121:8121 singhujjwal/url-service:0.2  uvicorn app.main:app --reload --host 0.0.0.0 --port 8121`
 `docker image push singhujjwal/url-service:0.2`
+
+
+kubectl port-forward svc/urlservice 8081:80 
+kubectl port-forward deployment/redis-master 6379:6379 
+kubectl port-forward pods/redis-asdasd 6379:6379 
