@@ -25,7 +25,7 @@ cd deploy/helm
 Deploy the `hello-kubernetes` app into the `hello-kubernetes` namespace with the default "Hello world!" message. The app is exposed via a public Load Balancer on port 80 by default - note that a LoadBalancer service typically only works in cloud provider based Kubernetes offerings.
 
 ```bash
-helm install --create-namespace --namespace hello-kubernetes hello-world ./hello-kubernetes
+helm install --create-namespace --namespace hello hello-world ./hello-kubernetes
 
 # get the LoadBalancer ip address.
 kubectl get svc hello-kubernetes-hello-world -n hello-kubernetes -o 'jsonpath={ .status.loadBalancer.ingress[0].ip }'

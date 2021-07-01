@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: wildcard-certificate
+  namespace: cert-manager
+spec:
+  dnsNames:
+  - '*.singhjee.in'
+  issuerRef:
+    kind: ClusterIssuer
+    name: civo
+  secretName: wildcard-example-com-tls
