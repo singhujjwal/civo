@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-urlservice
+  namespace: "url"
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: url.k8s.singhjee.in
+    http:
+      paths:
+      - path: /api/v1/urls/
+        pathType: Prefix
+        backend:
+          service:
+            name: urlservice
+            port:
+              number: 80
+

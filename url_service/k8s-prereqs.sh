@@ -9,7 +9,7 @@
 #   --set resources.limits.memory="1024Mi"
 
 kubectl create ns url
-kubectl create secret generic redis \
+kubectl create secret generic redis-details \
     --from-literal=REDIS_HOST="${REDIS_HOST}" \
     --from-literal=REDIS_PORT="${REDIS_PORT}" \
     --from-literal=REDIS_PASSWORD="${REDIS_PASSWORD}" -n url

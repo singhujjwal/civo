@@ -3,11 +3,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: url-service
-  name: url-service
-  naespace: url
+    app: urlservice
+  name: urlservice
+  namespace: url
 spec:
-  replicas: 4
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -15,15 +15,15 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: url-service
+      app: urlservice
   template:
     metadata:
       labels:
-        app: url-service
+        app: urlservice
     spec:
       containers:
-      - name: url-service
-        image: singhujjwal/url-service:0.2
+      - name: urlservice
+        image: singhujjwal/url-service:0.1
         command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
         workingDir: /app/
         ports:
@@ -42,15 +42,14 @@ spec:
               secretKeyRef:
                 name: redis-details
                 key: REDIS_HOST
-         - name: REDIS_PORT
+          - name: REDIS_PORT
             valueFrom:
               secretKeyRef:
                 name: redis-details
                 key: REDIS_PORT
-         - name: REDIS_PASSWORD
+          - name: REDIS_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: redis-details
                 key: REDIS_PASSWORD
-
 
