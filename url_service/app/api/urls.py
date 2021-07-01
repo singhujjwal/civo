@@ -30,7 +30,7 @@ urls = APIRouter()
 
 
 @urls.get('/ready/')
-async def get_long_url():
+async def get_readiness():
     return {"Hello": "Ready"}
 
 @urls.post('/', response_model=UrlOut, status_code=201)
@@ -51,7 +51,7 @@ async def get_short_url(payload: UrlIn,
                 detail="Redis cache connection problem")
     
 
-@urls.get('/{in_url}/', response_model=UrlIn)
+@urls.get('/long/{in_url}/', response_model=UrlIn)
 async def get_long_url(in_url: str):
     redis_client = redis_connect()
     longUrl = await url_manager.get_long_url(redis_client, in_url)
