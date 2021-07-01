@@ -23,3 +23,12 @@ export REDIS_HOST='xxxxxx'
 export REDIS_PORT=16262
 export REDIS_PASSWORD=passwordlongone
 
+
+
+####
+
+`docker build -t singhujjwal/url-service:0.2 .`
+`docker image push singhujjwal/url-service:0.2`
+`source env.sh`
+`docker run --env REDIS_HOST --env REDIS_PORT --env REDIS_PASSWORD -it --rm --name urls -w /app -p 8121:8121 singhujjwal/url-service:0.2  uvicorn app.main:app --reload --host 0.0.0.0 --port 8121`
+`docker image push singhujjwal/url-service:0.2`
