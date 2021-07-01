@@ -28,6 +28,11 @@ log.addHandler(ch)
 
 urls = APIRouter()
 
+
+@urls.get('/ready/')
+async def get_long_url():
+    return {"Hello": "Ready"}
+
 @urls.post('/', response_model=UrlOut, status_code=201)
 async def get_short_url(payload: UrlIn, 
     # producer: AIOKafkaProducer =  Depends(get_producer),
