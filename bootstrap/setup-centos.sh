@@ -1,3 +1,4 @@
+#!/bin/bash
 sudo yum -y update
 sudo yum groupinstall "Development Tools" -y
 sudo yum install openssl-devel libffi-devel bzip2-devel -y
@@ -10,4 +11,10 @@ sudo make altinstall
 
 pip3.9  install virtualenv
 
-#python3.9 -m virtualenv ~/.venv
+echo 'alias c=clear' >> ~/.bashrc
+echo 'alias k=kubectl' >> >> ~/.bashrc
+
+#python3.9 -m virtualenv ~/.p39
+#source ~/.p39/bin/activate
+#ssh-keygen
+
