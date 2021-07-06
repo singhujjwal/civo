@@ -9,4 +9,5 @@ cd Python-3.9*/
 sudo make altinstall
 
 pip3.9  install virtualenv
-python3.9 -m virtualenv ~/.venv
+
+#python3.9 -m virtualenv ~/.venv
