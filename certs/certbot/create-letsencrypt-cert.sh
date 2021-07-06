@@ -8,3 +8,12 @@ certbot certonly \
 --work-dir /home/centos/letsencrypt/work \
 -m singhujjwal@gmail.com \
 --agree-tos --manual --preferred-challenges dns
+
+
+openssl pkcs12 -export -out \
+	 cert.pfx  \
+	-in fullchain.pem \
+	-certfile chain.pem \
+	-inkey privkey.pem \
+	-passin pass:xxxxxxxx \
+    -passout pass:xxxxxxxx

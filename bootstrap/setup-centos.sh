@@ -16,7 +16,7 @@ sudo chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 
 
-TF_VERSION=0.12.29
+TF_VERSION=1.0.1
 wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
 unzip terraform_${TF_VERSION}_linux_amd64.zip
 sudo mv terraform /usr/local/bin/terraform
