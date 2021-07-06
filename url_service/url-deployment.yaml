@@ -38,10 +38,10 @@ spec:
           successThreshold: 1
         resources:
           requests:
-            memory: "64Mi"
+            memory: "200Mi"
             cpu: "250m"
           limits:
-            memory: "128Mi"
+            memory: "300Mi"
             cpu: "500m"
         env:
           - name: REDIS_HOST
