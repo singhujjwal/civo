@@ -128,3 +128,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+/.project
+/.pydevproject
+.settings/
+*.swp
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
