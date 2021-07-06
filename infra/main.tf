@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     civo = {
-      source = "civo/civo"
+      source  = "civo/civo"
       version = "0.10.3"
     }
   }
@@ -39,13 +39,13 @@ resource "civo_firewall" "www" {
 
 resource "civo_firewall_rule" "ssh" {
   firewall_id = civo_firewall.www.id
-  protocol = "tcp"
-  start_port = "22"
-  end_port = "22"
-  cidr = ["103.147.128.0/24"]
-  direction = "ingress"
-  label = "server ssh"
-  depends_on = [civo_firewall.www]
+  protocol    = "tcp"
+  start_port  = "22"
+  end_port    = "22"
+  cidr        = ["103.147.128.0/24"]
+  direction   = "ingress"
+  label       = "server ssh"
+  depends_on  = [civo_firewall.www]
 }
 
 // resource "civo_kubernetes_cluster" "cluster" {
