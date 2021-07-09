@@ -49,9 +49,7 @@ consumer = None
 async def initialize():
     log.debug("Initializing the kafka consumer....")
     group_id = f'{KAFKA_CONSUMER_GROUP_PREFIX}-{randint(0, 10000)}'
-    log.debug(f'Initializing KafkaConsumer for topic {KAFKA_TOPIC}'
-                'group_id {group_id} and using '
-                'bootstrap servers {KAFKA_BOOTSTRAP_SERVERS}')
+    log.debug(f'Initializing KafkaConsumer for topic {KAFKA_TOPIC} with group_id {group_id} and using bootstrap servers {KAFKA_BOOTSTRAP_SERVERS}')
     global consumer
     consumer = AIOKafkaConsumer(KAFKA_TOPIC, loop=asyncio.get_event_loop(),
                                          bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
