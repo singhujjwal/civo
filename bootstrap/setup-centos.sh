@@ -71,9 +71,25 @@ EOF
 
 
 echo 'alias c=clear' >> ~/.bashrc
-echo 'alias k=kubectl' >> >> ~/.bashrc
+echo 'alias k=kubectl' >> ~/.bashrc
+
+
+#ssh-keygen
+
+sudo yum install -y yum-utils
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+
+sudo yum -y install docker-ce docker-ce-cli containerd.io
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+
+
+git clone git@github.com:singhujjwal/civo.git
+git config --global user.name "Ujjwal Singh"
+git config --global user.email "singhujjwal@gmail.com"
 
 #python3.9 -m virtualenv ~/.p39
 #source ~/.p39/bin/activate
-#ssh-keygen
-
