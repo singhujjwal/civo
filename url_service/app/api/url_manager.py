@@ -31,7 +31,7 @@ def base_encode(hash_val: int, base=BASE_LIST) -> str:
     return ret
 
 
-def get_tiny_url(input_url: str) -> str:
+def calculate_tiny_url(input_url: str) ->str:
     '''
     Design :
     1. Suppose we have a-z, A-Z and 0-9 and _ and @ as the characters in the tinyurl there will total of
@@ -42,7 +42,6 @@ def get_tiny_url(input_url: str) -> str:
     pow(62,6) == 56,800 235,584 56 billion records 
 
     '''
-    
     h = hashlib.md5(input_url.encode('ascii'))
     hexnumber = h.hexdigest()[:11]
     # import pdb
@@ -50,27 +49,69 @@ def get_tiny_url(input_url: str) -> str:
     decimal_value = int(hexnumber, 16)
     return base_encode(decimal_value)
 
+
+PREFIX = "https://u.co/"
+
+def get_tiny_url(redis_client, input_url: str) -> str:
+    '''
+    1. Check if already a tiny url is present in cache
+    '''
+    result_json = {}
+    if redis_client.exists(input_url):
+        log.info("tiny url already present in the cache, returning....")
+        suffix =  redis_client.get(input_url)
+        result_json['shortUrl'] = f"{PREFIX}{suffix}"
+        log.debug ("the tinyurl returned is {}".format(result_json['shortUrl']))
+        return result_json
+    else:
+        db_client = None
+        db_item = db_client.get(input_url)
+        if db_item:
+            redis_client.set(input_url, db_item)
+            return result_json['shortUrl'] = f"{db_item}{db_item}"
+        redis_client.set(input_url, db_client.get(input_url))
+
+
 async def does_exists_in_redis():
     log.debug ("Is it present in redis..")
     return True
 
+def push_to_kafka(tiny_url: str, long_url: str):
+    log.info(f"Push to KAFKA {tiny_url} and {long_url}")
+    return
+
 async def get_short_url(redis_client, payload: UrlIn):
+    '''
+    1. Check if already a tiny url is mapped to the long url requested
+    2. Check in cache first (use a redis connection pool)
+    3. Check in DB (again use a connection pool here and use that to check in DB) if present update cache and return value
+    4. Create a tiny url, push to Kafka, update redis return (pass through cache)
+    5. This is a synchronous operation
+    '''
     log.debug ("Getting short url....")
     log.debug (payload.longUrl)
     result_json = {}
-   
-    # TODO: convert to async await
-    tiny_url = get_tiny_url(payload.longUrl)
+    tiny_url = calculate_tiny_url(payload.longUrl)
     
-    # Make below atomic ??
-    # TODO put a lock think how ??
     if redis_client.exists(tiny_url):
         log.info("tiny url already present in the cache, not putting it again...")
+        suffix =  redis_client.get(tiny_url)
+        result_json['shortUrl'] = f"{PREFIX}{suffix}"
     else:
+        log.info("Skipping DB logic for now.............")
         redis_client.set(tiny_url, payload.longUrl)
+        result_json['shortUrl'] = f"{PREFIX}{tiny_url}"
+        push_to_kafka(tiny_url, payload.longUrl)
+        pass
+        # db_client = None
+        # is_present = db_client.exists(tiny_url)
+        # if is_present:
+        #     redis_client.set(tiny_url, payload.longUrl)
+        #     result_json['shortUrl'] = f"{PREFIX}{tiny_url}"
+        # else:
+        #     redis_client.set(tiny_url, payload.longUrl)
+        #     push_to_kafka(tiny_url, payload.longUrl)
 
-    # save some space by having the part http://u.co/
-    result_json['shortUrl'] = f"https://u.co/{tiny_url}"
     log.debug ("the tinyurl returned is {}".format(result_json['shortUrl']))
     return result_json
 

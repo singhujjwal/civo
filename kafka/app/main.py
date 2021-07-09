@@ -19,27 +19,21 @@ ch.setFormatter(CustomFormatter())
 log.addHandler(ch)
 
 
-
-
 app = FastAPI(openapi_url="/api/v1/kafka/openapi.json", 
                 docs_url="/api/v1/kafka/docs")
-
 app.include_router(
     kafka, prefix='/api/v1/kafka',
     # dependencies=[Depends(redis_connect)],
     tags=['urls']
     )
 
-
 @app.on_event("startup")
 async def startup_event():
     log.info('Initializing Kafka service....')
 
-
 @app.on_event("shutdown")
 async def shutdown_event():
     log.info('Shutting down Kafka Service')
-
 
 KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', "URL")
 KAFKA_CONSUMER_GROUP_PREFIX = os.getenv('KAFKA_CONSUMER_GROUP_PREFIX', 'url-group')
@@ -72,11 +66,8 @@ async def initialize():
             log.warning(f'Topic ({KAFKA_TOPIC}) has no messages (log_end_offset: '
                         f'{end_offset}), skipping initialization ...')
             return
-
-
         # ACtual code is above one, if there should be no messages in a graceful shutdown
         # mode so there is not much other than start consumner thread to start consuming
-
         log.debug(f'Found log_end_offset: {end_offset} seeking to {end_offset-1}')
         consumer.seek(tp, end_offset-1)
         msg = await consumer.getone()

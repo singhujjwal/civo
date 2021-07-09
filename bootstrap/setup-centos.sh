@@ -90,6 +90,7 @@ sudo usermod -aG docker $USER
 git clone git@github.com:singhujjwal/civo.git
 git config --global user.name "Ujjwal Singh"
 git config --global user.email "singhujjwal@gmail.com"
+git config --global push.default simple
 
 #python3.9 -m virtualenv ~/.p39
 #source ~/.p39/bin/activate
