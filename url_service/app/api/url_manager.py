@@ -52,24 +52,24 @@ def calculate_tiny_url(input_url: str) ->str:
 
 PREFIX = "https://u.co/"
 
-def get_tiny_url(redis_client, input_url: str) -> str:
-    '''
-    1. Check if already a tiny url is present in cache
-    '''
-    result_json = {}
-    if redis_client.exists(input_url):
-        log.info("tiny url already present in the cache, returning....")
-        suffix =  redis_client.get(input_url)
-        result_json['shortUrl'] = f"{PREFIX}{suffix}"
-        log.debug ("the tinyurl returned is {}".format(result_json['shortUrl']))
-        return result_json
-    else:
-        db_client = None
-        db_item = db_client.get(input_url)
-        if db_item:
-            redis_client.set(input_url, db_item)
-            return result_json['shortUrl'] = f"{db_item}{db_item}"
-        redis_client.set(input_url, db_client.get(input_url))
+# def get_tiny_url(redis_client, input_url: str) -> str:
+#     '''
+#     1. Check if already a tiny url is present in cache
+#     '''
+#     result_json = {}
+#     if redis_client.exists(input_url):
+#         log.info("tiny url already present in the cache, returning....")
+#         suffix =  redis_client.get(input_url)
+#         result_json['shortUrl'] = f"{PREFIX}{suffix}"
+#         log.debug ("the tinyurl returned is {}".format(result_json['shortUrl']))
+#         return result_json
+#     else:
+#         db_client = None
+#         db_item = db_client.get(input_url)
+#         if db_item:
+#             redis_client.set(input_url, db_item)
+#             return result_json['shortUrl'] = f"{PREFIX}{suffix}"
+#         redis_client.set(input_url, db_client.get(input_url))
 
 
 async def does_exists_in_redis():
