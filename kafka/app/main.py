@@ -30,6 +30,7 @@ app.include_router(
 @app.on_event("startup")
 async def startup_event():
     log.info('Initializing Kafka service....')
+    await initialize()
 
 @app.on_event("shutdown")
 async def shutdown_event():
