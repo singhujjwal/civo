@@ -12,6 +12,7 @@ from .redis_py import redis_connect
 from fastapi.param_functions import Depends
 from .models import UrlOut, UrlIn
 from . import url_manager
+import os
 
 ## Logging code
 from ..utils.formatlogs import CustomFormatter
@@ -29,6 +30,10 @@ log.addHandler(ch)
 import aiokafka
 import asyncio
 
+
+KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', "URL")
+KAFKA_CONSUMER_GROUP_PREFIX = os.getenv('KAFKA_CONSUMER_GROUP_PREFIX', 'url-group')
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '127.0.0.1:9093')
 aioproducer = aiokafka.AIOKafkaProducer(loop=asyncio.get_event_loop(), 
                     bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
 
