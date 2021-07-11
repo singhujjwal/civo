@@ -1,6 +1,9 @@
+import asyncio
 import logging
+import os
 
 from fastapi.routing import APIRouter
+import aiokafka
 
 
 from ..utils.formatlogs import CustomFormatter

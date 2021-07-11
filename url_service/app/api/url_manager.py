@@ -1,6 +1,9 @@
+from typing import final
 from .models import UrlIn, UrlOut
 import hashlib
 import logging
+import os
+import aiokafka
 from ..utils.formatlogs import CustomFormatter
 
 
@@ -13,9 +16,7 @@ ch.setFormatter(CustomFormatter())
 log.addHandler(ch)
 
 
-
 # import string
-
 # BASE_LIST = string.digits + string.letters 
 BASE_LIST = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGGHIJKLMNOPQRSTUVWXYZ'
 BASE_DICT = dict((c, i) for i, c in enumerate(BASE_LIST))
@@ -72,14 +73,6 @@ PREFIX = "https://u.co/"
 #         redis_client.set(input_url, db_client.get(input_url))
 
 
-async def does_exists_in_redis():
-    log.debug ("Is it present in redis..")
-    return True
-
-def push_to_kafka(tiny_url: str, long_url: str):
-    log.info(f"Push to KAFKA {tiny_url} and {long_url}")
-    return
-
 async def get_short_url(redis_client, payload: UrlIn):
     '''
     1. Check if already a tiny url is mapped to the long url requested
@@ -102,6 +95,7 @@ async def get_short_url(redis_client, payload: UrlIn):
         redis_client.set(tiny_url, payload.longUrl)
         result_json['shortUrl'] = f"{PREFIX}{tiny_url}"
         push_to_kafka(tiny_url, payload.longUrl)
+        # producer.send_and_wait(tiny_url, long_url.encode('utf-8'))
         pass
         # db_client = None
         # is_present = db_client.exists(tiny_url)

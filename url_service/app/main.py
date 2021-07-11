@@ -47,20 +47,24 @@ app.include_router(
 @app.on_event("startup")
 async def startup_event():
     log.info('Initializing URL service  ...')
-    if USE_KAFKA:
-        await initialize()
-        await consume()
-
-
-    # await get_producer().start()
+    await aioproducer.start()
 
 @app.on_event("shutdown")
 async def shutdown_event():
     log.info('Shutting down API')
-    if USE_KAFKA:
-        consumer_task.cancel()
-        await consumer.stop()
+    await aioproducer.stop()
+
     if USE_REDIS:
         redis_client = redis_connect()
         redis_client.flushall()
         redis_client.close()
+
+
+KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', "URL")
+KAFKA_CONSUMER_GROUP_PREFIX = os.getenv('KAFKA_CONSUMER_GROUP_PREFIX', 'url-group')
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '127.0.0.1:9093')
+
+import aiokafka
+import asyncio
+aioproducer = aiokafka.AIOKafkaProducer(loop=asyncio.get_event_loop(), 
+                    bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)

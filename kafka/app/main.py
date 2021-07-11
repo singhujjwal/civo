@@ -31,6 +31,7 @@ app.include_router(
 async def startup_event():
     log.info('Initializing Kafka service....')
     await initialize()
+    await consume()
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -40,6 +41,25 @@ KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', "URL")
 KAFKA_CONSUMER_GROUP_PREFIX = os.getenv('KAFKA_CONSUMER_GROUP_PREFIX', 'url-group')
 KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '127.0.0.1:9093')
 consumer = None
+consumer_task = None
+
+
+async def send_consumer_message(consumer):
+    try:
+        async for msg in consumer:
+            log.info(f"Consumed message {msg}")           
+    finally:
+        log.warning("Stopping consumeer...")
+        await consumer.stop()
+
+def done_consuming():
+    log.info("Consumer is done consuming the message... so an acknowledgement be sent...")
+
+async def consume():
+    global consumer_task
+    consumer_task = asyncio.create_task(send_consumer_message(consumer))
+    consumer_task.add_done_callback(done_consuming())
+    return
 
 async def initialize():
     log.debug("Initializing the kafka consumer....")
