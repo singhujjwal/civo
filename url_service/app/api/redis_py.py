@@ -56,4 +56,4 @@ def redis_connect() -> redis.client.Redis:
         raise HTTPException(status_code=500, 
                 detail="Redis cache connection problem")
     finally:
-        log.critical("Dont forget to export the redis related env")
+        log.critical("Just for Reminding ---Dont forget to export the redis related env")
