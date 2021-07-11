@@ -35,9 +35,11 @@ async def get_readiness():
 
 @urls.post('/', response_model=UrlOut, status_code=201)
 async def get_short_url(payload: UrlIn, 
-    # producer: AIOKafkaProducer =  Depends(get_producer),
+    producer: AIOKafkaProducer,
     # redis_client: redis.client.Redis= redis_connect()
     ):
+
+    log.critical(f"Did we get the producer ??? {producer}")
     redis_client = redis_connect()
     if redis_client:
         short_url = await url_manager.get_short_url(redis_client, payload)

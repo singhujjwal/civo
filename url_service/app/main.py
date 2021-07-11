@@ -28,20 +28,28 @@ log.addHandler(ch)
 app = FastAPI(openapi_url="/api/v1/urls/openapi.json", 
                 docs_url="/api/v1/urls/docs")
 
+KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', "URL")
+KAFKA_CONSUMER_GROUP_PREFIX = os.getenv('KAFKA_CONSUMER_GROUP_PREFIX', 'url-group')
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '127.0.0.1:9093')
+
+import aiokafka
+import asyncio
+aioproducer = aiokafka.AIOKafkaProducer(loop=asyncio.get_event_loop(), 
+                    bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
 
 # Below code will be used to pass the producer object which is not needed in synchronous 
 # process
-# app.include_router(
-#     urls, prefix='/api/v1/urls',
-#     dependencies=[Depends(get_producer)],
-#     tags=['urls']
-#     )
-
 app.include_router(
     urls, prefix='/api/v1/urls',
-    # dependencies=[Depends(redis_connect)],
+    dependencies=[Depends(aioproducer)],
     tags=['urls']
     )
+
+# app.include_router(
+#     urls, prefix='/api/v1/urls',
+#     # dependencies=[Depends(redis_connect)],
+#     tags=['urls']
+#     )
 
 
 @app.on_event("startup")
@@ -60,11 +68,3 @@ async def shutdown_event():
         redis_client.close()
 
 
-KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', "URL")
-KAFKA_CONSUMER_GROUP_PREFIX = os.getenv('KAFKA_CONSUMER_GROUP_PREFIX', 'url-group')
-KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '127.0.0.1:9093')
-
-import aiokafka
-import asyncio
-aioproducer = aiokafka.AIOKafkaProducer(loop=asyncio.get_event_loop(), 
-                    bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)

@@ -94,7 +94,7 @@ async def get_short_url(redis_client, payload: UrlIn):
         log.info("Skipping DB logic for now.............")
         redis_client.set(tiny_url, payload.longUrl)
         result_json['shortUrl'] = f"{PREFIX}{tiny_url}"
-        push_to_kafka(tiny_url, payload.longUrl)
+        # push_to_kafka(tiny_url, payload.longUrl)
         # producer.send_and_wait(tiny_url, long_url.encode('utf-8'))
         pass
         # db_client = None
