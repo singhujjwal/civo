@@ -48,7 +48,7 @@ def get_producer():
 # process
 app.include_router(
     urls, prefix='/api/v1/urls',
-    dependencies=[Depends(aioproducer)],
+    dependencies=[Depends(get_producer)],
     tags=['urls']
     )
 
