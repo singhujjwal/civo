@@ -1,7 +1,7 @@
 from typing import List
 # from ..dependencies import get_producer
 from aiokafka.producer.producer import AIOKafkaProducer
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 import logging
 import redis
 from starlette import responses
@@ -26,6 +26,19 @@ log.addHandler(ch)
 ## Logging end
 
 
+import aiokafka
+import asyncio
+
+aioproducer = aiokafka.AIOKafkaProducer(loop=asyncio.get_event_loop(), 
+                    bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
+
+def get_producer():
+    '''
+    Callable to be used as dependency
+    '''
+    global aioproducer
+    return aioproducer
+
 urls = APIRouter()
 
 
@@ -35,11 +48,9 @@ async def get_readiness():
 
 @urls.post('/', response_model=UrlOut, status_code=201)
 async def get_short_url(payload: UrlIn, 
-    producer: AIOKafkaProducer,
+    producer: AIOKafkaProducer =  Depends(AIOKafkaProducer),
     # redis_client: redis.client.Redis= redis_connect()
     ):
-
-    log.critical(f"Did we get the producer ??? {producer}")
     redis_client = redis_connect()
     if redis_client:
         short_url = await url_manager.get_short_url(redis_client, payload)

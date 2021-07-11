@@ -37,6 +37,13 @@ import asyncio
 aioproducer = aiokafka.AIOKafkaProducer(loop=asyncio.get_event_loop(), 
                     bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
 
+def get_producer():
+    '''
+    Callable to be used as dependency
+    '''
+    global aioproducer
+    return aioproducer
+
 # Below code will be used to pass the producer object which is not needed in synchronous 
 # process
 app.include_router(
@@ -55,6 +62,7 @@ app.include_router(
 @app.on_event("startup")
 async def startup_event():
     log.info('Initializing URL service  ...')
+    global aioproducer
     await aioproducer.start()
 
 @app.on_event("shutdown")
