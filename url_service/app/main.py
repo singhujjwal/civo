@@ -3,6 +3,7 @@ from fastapi import Depends
 import logging
 import os
 from contextvars import ContextVar
+from .kafka import get_producer
 
 
 from .api.urls import urls
