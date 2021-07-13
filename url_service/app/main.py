@@ -3,7 +3,7 @@ from fastapi import Depends
 import logging
 import os
 from contextvars import ContextVar
-from .kafka import get_producer
+from .depends import get_producer
 
 
 from .api.urls import urls
@@ -60,7 +60,7 @@ async def shutdown_event():
     aioproducer = get_producer()
     await aioproducer.stop()
     # Don't flush all from redis this will kill the stateless nature of the application
-    
+
     # if USE_REDIS:
     #     redis_client = redis_connect()
     #     redis_client.flushall()
