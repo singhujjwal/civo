@@ -34,7 +34,7 @@ run_test() {
 # When double-quoted, "$@" expands to separate strings - "$1" "$2" "$n".
 # When not double-quoted, $* and $@ are the same.
 
-for i in {1..100} 
+for i in {1..$2} 
   do
     func_result="https://$(random-string).com"
     run_test "$func_result"
