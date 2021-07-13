@@ -33,9 +33,7 @@ from aiokafka import AIOKafkaProducer
 import asyncio
 
 
-KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', "URL")
-KAFKA_CONSUMER_GROUP_PREFIX = os.getenv('KAFKA_CONSUMER_GROUP_PREFIX', 'url-group')
-KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '127.0.0.1:9093')
+
 
 
 # def get_producer():
@@ -48,23 +46,12 @@ KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '127.0.0.1:9093')
 urls = APIRouter()
 
 
-async def get_producer():
-    aioproducer = AIOKafkaProducer(loop=asyncio.get_event_loop(), 
-                    bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
-    try:
-        aioproducer.start()
-        yield aioproducer
-    finally:
-        aioproducer.stop()
-
-
 @urls.get('/ready/')
 async def get_readiness():
     return {"Hello": "Ready"}
 
 @urls.post('/', response_model=UrlOut, status_code=201)
-async def get_short_url(payload: UrlIn,
-    aioproducer: AIOKafkaConsumer = Depends(AIOKafkaProducer)
+async def get_short_url(payload: UrlIn
     # redis_client: redis.client.Redis= redis_connect()
     ):
     redis_client = redis_connect()

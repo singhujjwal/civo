@@ -1,10 +1,13 @@
 from typing import final
+
+from aiokafka.producer import producer
 from .models import UrlIn, UrlOut
 import hashlib
 import logging
 import os
-import aiokafka
+from aiokafka import AIOKafkaProducer
 from ..utils.formatlogs import CustomFormatter
+import asyncio
 
 
 log = logging.getLogger(__name__)
@@ -14,6 +17,20 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 ch.setFormatter(CustomFormatter())
 log.addHandler(ch)
+
+
+KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', "URL")
+KAFKA_CONSUMER_GROUP_PREFIX = os.getenv('KAFKA_CONSUMER_GROUP_PREFIX', 'url-group')
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '127.0.0.1:9093')
+
+async def get_producer():
+    aioproducer = AIOKafkaProducer(loop=asyncio.get_event_loop(), 
+                    bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
+    try:
+        aioproducer.start()
+        yield aioproducer
+    finally:
+        aioproducer.stop()
 
 
 # import string
@@ -94,6 +111,8 @@ async def get_short_url(redis_client, payload: UrlIn):
         log.info("Skipping DB logic for now.............")
         redis_client.set(tiny_url, payload.longUrl)
         result_json['shortUrl'] = f"{PREFIX}{tiny_url}"
+        producer = get_producer()
+        log.critical (producer)
         # push_to_kafka(tiny_url, payload.longUrl)
         # producer.send_and_wait(tiny_url, long_url.encode('utf-8'))
         pass
