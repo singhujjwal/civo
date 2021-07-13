@@ -1,12 +1,11 @@
-from typing import final
-
+import json
 from aiokafka.producer import producer
 from .models import UrlIn, UrlOut
 import hashlib
 import logging
 import os
-from aiokafka import AIOKafkaProducer
 from ..utils.formatlogs import CustomFormatter
+
 
 
 log = logging.getLogger(__name__)
@@ -18,16 +17,9 @@ ch.setFormatter(CustomFormatter())
 log.addHandler(ch)
 
 
-
-# async def get_producer():
-#     global aioproducer
-#     try:
-#         aioproducer.start()
-#         yield aioproducer
-#     finally:
-#         aioproducer.stop()
-
-
+KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', "URL")
+PREFIX = "https://u.co/"
+        
 # import string
 # BASE_LIST = string.digits + string.letters 
 BASE_LIST = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGGHIJKLMNOPQRSTUVWXYZ'
@@ -62,29 +54,6 @@ def calculate_tiny_url(input_url: str) ->str:
     decimal_value = int(hexnumber, 16)
     return base_encode(decimal_value)
 
-
-PREFIX = "https://u.co/"
-
-# def get_tiny_url(redis_client, input_url: str) -> str:
-#     '''
-#     1. Check if already a tiny url is present in cache
-#     '''
-#     result_json = {}
-#     if redis_client.exists(input_url):
-#         log.info("tiny url already present in the cache, returning....")
-#         suffix =  redis_client.get(input_url)
-#         result_json['shortUrl'] = f"{PREFIX}{suffix}"
-#         log.debug ("the tinyurl returned is {}".format(result_json['shortUrl']))
-#         return result_json
-#     else:
-#         db_client = None
-#         db_item = db_client.get(input_url)
-#         if db_item:
-#             redis_client.set(input_url, db_item)
-#             return result_json['shortUrl'] = f"{PREFIX}{suffix}"
-#         redis_client.set(input_url, db_client.get(input_url))
-
-
 async def get_short_url(redis_client, payload: UrlIn, aioProducer):
     '''
     1. Check if already a tiny url is mapped to the long url requested
@@ -107,18 +76,7 @@ async def get_short_url(redis_client, payload: UrlIn, aioProducer):
         redis_client.set(tiny_url, payload.longUrl)
         result_json['shortUrl'] = f"{PREFIX}{tiny_url}"
         log.critical(aioProducer)
-        # push_to_kafka(tiny_url, payload.longUrl)
-        # producer.send_and_wait(tiny_url, long_url.encode('utf-8'))
-        pass
-        # db_client = None
-        # is_present = db_client.exists(tiny_url)
-        # if is_present:
-        #     redis_client.set(tiny_url, payload.longUrl)
-        #     result_json['shortUrl'] = f"{PREFIX}{tiny_url}"
-        # else:
-        #     redis_client.set(tiny_url, payload.longUrl)
-        #     push_to_kafka(tiny_url, payload.longUrl)
-
+        await aioProducer.send_and_wait(KAFKA_TOPIC,  json.dumps(result_json).encode('utf-8'))
     log.debug ("the tinyurl returned is {}".format(result_json['shortUrl']))
     return result_json
 
@@ -129,5 +87,4 @@ async def get_long_url(redis_client, short_url: str):
         log.debug (f"Getting Long url....{longUrl}")
     else:
         log.info(f"No long url mapped to the short url {short_url}")
-
     return longUrl

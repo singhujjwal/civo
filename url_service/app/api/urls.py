@@ -8,7 +8,8 @@ import redis
 from starlette import responses
 
 from .redis_py import redis_connect
-from ..kafka import get_producer
+from ..depends import get_producer
+from ..depends import redis_connect
 
 # from ..dependencies import get_producer
 from fastapi.param_functions import Depends
@@ -29,23 +30,8 @@ log.addHandler(ch)
 ## Logging end
 
 
-import aiokafka
 from aiokafka import AIOKafkaProducer
-import asyncio
-
-
-
-
-
-# def get_producer():
-#     '''
-#     Callable to be used as dependency
-#     '''
-#     global aioproducer
-#     return aioproducer
-
 urls = APIRouter()
-
 
 @urls.get('/ready/')
 async def get_readiness():

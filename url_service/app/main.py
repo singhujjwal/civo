@@ -59,9 +59,11 @@ async def shutdown_event():
     log.info('Shutting down API')
     aioproducer = get_producer()
     await aioproducer.stop()
-    if USE_REDIS:
-        redis_client = redis_connect()
-        redis_client.flushall()
-        redis_client.close()
+    # Don't flush all from redis this will kill the stateless nature of the application
+    
+    # if USE_REDIS:
+    #     redis_client = redis_connect()
+    #     redis_client.flushall()
+    #     redis_client.close()
 
 
