@@ -4,12 +4,12 @@ import logging
 import os
 from contextvars import ContextVar
 
-from .kafka import get_producer
 
 from .api.urls import urls
 # from .dependencies import get_producer, initialize, consume, consumer, consumer_task
 from .api.redis_py import redis_connect
 from .utils.formatlogs import CustomFormatter
+
 
 consumer = None
 consumer_task = None
