@@ -7,10 +7,6 @@ import logging
 import os
 from aiokafka import AIOKafkaProducer
 from ..utils.formatlogs import CustomFormatter
-import asyncio
-
-
-from ..main import get_producer
 
 
 log = logging.getLogger(__name__)
@@ -89,7 +85,7 @@ PREFIX = "https://u.co/"
 #         redis_client.set(input_url, db_client.get(input_url))
 
 
-async def get_short_url(redis_client, payload: UrlIn):
+async def get_short_url(redis_client, payload: UrlIn, aioProducer):
     '''
     1. Check if already a tiny url is mapped to the long url requested
     2. Check in cache first (use a redis connection pool)
@@ -110,8 +106,7 @@ async def get_short_url(redis_client, payload: UrlIn):
         log.info("Skipping DB logic for now.............")
         redis_client.set(tiny_url, payload.longUrl)
         result_json['shortUrl'] = f"{PREFIX}{tiny_url}"
-        aioproducer = get_producer()
-        log.critical(aioproducer)
+        log.critical(aioProducer)
         # push_to_kafka(tiny_url, payload.longUrl)
         # producer.send_and_wait(tiny_url, long_url.encode('utf-8'))
         pass

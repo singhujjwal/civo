@@ -8,6 +8,7 @@ import redis
 from starlette import responses
 
 from .redis_py import redis_connect
+from ..kafka import get_producer
 
 # from ..dependencies import get_producer
 from fastapi.param_functions import Depends
@@ -51,12 +52,13 @@ async def get_readiness():
     return {"Hello": "Ready"}
 
 @urls.post('/', response_model=UrlOut, status_code=201)
-async def get_short_url(payload: UrlIn
+async def get_short_url(payload: UrlIn,
+    aioProducer: AIOKafkaProducer = Depends(get_producer)
     # redis_client: redis.client.Redis= redis_connect()
     ):
     redis_client = redis_connect()
     if redis_client:
-        short_url = await url_manager.get_short_url(redis_client, payload)
+        short_url = await url_manager.get_short_url(redis_client, payload, aioProducer)
 
         response = {
             **short_url
