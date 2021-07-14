@@ -13,8 +13,8 @@ export KAFKA_BOOTSTRAP_SERVERS='kafka:9092'
 docker run \
     --network  kafka_default \
     --env REDIS_HOST --env REDIS_PORT --env REDIS_PASSWORD \
-    --env KAFKA_BOOTSTRAP_SERVERS \
-    -it --rm --name urls -w /app -p 8122:8122 \
+    --env KAFKA_BOOTSTRAP_SERVERS='kafka:9092' \
+    -it --rm --name consumer -w /app -p 8122:8122 \
     singhujjwal/consumer:0.1 uvicorn app.main:app \
     --reload --host 0.0.0.0 --port 8122
 ```
