@@ -1,0 +1,10 @@
+aiokafka==0.7.1
+click==7.1.2
+fastapi==0.63.0
+h11==0.12.0
+kafka-python==2.0.2
+pydantic==1.8.2
+redis==3.5.3
+starlette==0.13.6
+typing-extensions==3.10.0.0
+uvicorn==0.13.3

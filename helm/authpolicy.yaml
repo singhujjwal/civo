@@ -1,0 +1,15 @@
+---
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "Policy"
+metadata:
+name: default
+namespace: xxxxxxx
+spec:
+origins:
+- jwt:
+issuer: "https://example.com/auth/realms/realm_name"
+jwksUri: "https://example.com/auth/realms/realm_name/protocol/openid-connect/certs"
+- jwt:
+issuer: "https://keycloak.example.com/auth/realms/realm_name"
+jwksUri: "https://keycloak.example.com/auth/realms/realm_name/protocol/openid-connect/certs"
+principalBinding: USE_ORIGIN
