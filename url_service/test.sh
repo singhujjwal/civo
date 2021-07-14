@@ -18,7 +18,7 @@ run_test() {
   
   echo "The random string is $1"
   curl -X 'POST' \
-  'http://url.k8s.singhjee.in:8121/api/v1/urls/' \
+  'http://url.vm.singhjee.in:8121/api/v1/urls/' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{"longUrl": "'$1'"}'

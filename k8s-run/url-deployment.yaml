@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: urlservice
+  name: urlservice
+  namespace: url
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: urlservice
+  template:
+    metadata:
+      labels:
+        app: urlservice
+    spec:
+      containers:
+      - name: urlservice
+        image: singhujjwal/url-service:0.3
+        command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+        workingDir: /app/
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /api/v1/urls/ready/
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "250m"
+          limits:
+            memory: "300Mi"
+            cpu: "500m"
+        env:
+          - name: REDIS_HOST
+            valueFrom:
+              secretKeyRef:
+                name: redis-details
+                key: REDIS_HOST
+          - name: REDIS_PORT
+            valueFrom:
+              secretKeyRef:
+                name: redis-details
+                key: REDIS_PORT
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-details
+                key: REDIS_PASSWORD
