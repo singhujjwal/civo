@@ -36,11 +36,18 @@ kubectl create secret docker-registry ujjwaldocker --docker-server=hub.docker.co
 # restrict sa in the namespace with right role, rolebindings and adding a imagepullsecret
 kubectl replace serviceaccount default -f ./url-serviceaccount.yaml -n url
 
+# Put this in secrets and later use it as helm parameters
 
 # kubectl get all
 kubectl api-resources --verbs=list --namespaced -o name \
   | xargs -n 1 kubectl get --show-kind --ignore-not-found -n url <namespace>
+cd frontend
 kubectl apply -f ./url-deployment.yaml
+
+
+
+# http://url.k8s.singhjee.in/api/v1/urls/docs
+# http://consumer.k8s.singhjee.in/api/v1/kafka/docs
 
 
 
