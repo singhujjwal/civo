@@ -49,6 +49,8 @@ kubectl apply -f ./url-deployment.yaml
 # http://url.k8s.singhjee.in/api/v1/urls/docs
 # http://consumer.k8s.singhjee.in/api/v1/kafka/docs
 
+# kubectl scale deployment.v1.apps/loadrunner --replicas=10
+
 
 
 
