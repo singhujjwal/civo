@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: loadrunner
+  name: loadrunner
+  namespace: url
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: loadrunner
+  template:
+    metadata:
+      labels:
+        app: loadrunner
+    spec:
+      containers:
+      - name: loadrunner
+        image: ubuntu:20.04
+        command:
+          - 'bash'
+          - '-c'
+          - >
+            echo "############# Running test......";
+            apt update && apt install curl -y;
+            echo -e "\n\n############# Get scripts...";
+            cd /opt;
+            curl -# -O https://raw.githubusercontent.com/singhujjwal/civo/k8s/k8s-run/test.sh;
+            chmod +x *.sh;
+            ls -la;
+            ./test.sh
+            echo -e "\n\n############# Going to sleep for 30 days...";
+            sleep 30d
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "250m"
+          limits:
+            memory: "300Mi"
+            cpu: "500m"

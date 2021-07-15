@@ -24,7 +24,7 @@ app = FastAPI(openapi_url="/api/v1/kafka/openapi.json",
 app.include_router(
     kafka, prefix='/api/v1/kafka',
     # dependencies=[Depends(redis_connect)],
-    tags=['urls']
+    tags=['kafka']
     )
 
 @app.on_event("startup")

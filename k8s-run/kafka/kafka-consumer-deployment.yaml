@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: urlconsumer
+  name: urlconsumer
+  namespace: url
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: urlconsumer
+  template:
+    metadata:
+      labels:
+        app: urlconsumer
+    spec:
+      containers:
+      - name: urlconsumer
+        image: singhujjwal/consumer:0.1
+        command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+        workingDir: /app/
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /api/v1/kafka/ready/
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "250m"
+          limits:
+            memory: "300Mi"
+            cpu: "500m"
+        env:
+          - name: REDIS_HOST
+            valueFrom:
+              secretKeyRef:
+                name: redis-details
+                key: REDIS_HOST
+          - name: REDIS_PORT
+            valueFrom:
+              secretKeyRef:
+                name: redis-details
+                key: REDIS_PORT
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-details
+                key: REDIS_PASSWORD
+          - name: KAFKA_BOOTSTRAP_SERVERS
+            value: 'kafka.kafka:9092'

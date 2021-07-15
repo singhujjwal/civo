@@ -15,14 +15,12 @@ random-string() {
 
 
 run_test() {
-  
   echo "The random string is $1"
   curl -X 'POST' \
-  'http://url.vm.singhjee.in:8121/api/v1/urls/' \
+  'http://url.k8s.singhjee.in/api/v1/urls/' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{"longUrl": "'$1'"}'
-
 }
 
 
@@ -35,7 +33,11 @@ run_test() {
 # When not double-quoted, $* and $@ are the same.
 
 # for i in {1..100} 
-for i in  {1..100}
+# while true
+# while :
+# 
+# 
+for ((; ;))
   do
     func_result="https://$(random-string).com"
     run_test "$func_result"
