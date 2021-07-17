@@ -71,13 +71,11 @@ resource "civo_kubernetes_cluster" "my-cluster" {
       type     = "ssh"
       user     = "centos"
       password = "Kube@321"
-      # private_key = file("${path.module}/hello.txt")
       private_key = file("~/.ssh/id_rsa")
       host     = "localhost"
     }
 
 
-    file("${path.module}/hello.txt")
   }
 }
 
