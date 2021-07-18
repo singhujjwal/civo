@@ -72,9 +72,10 @@ echo "Sleep for 1 minute"
 
 echo "Check for logs"
 kubectl logs -l app=urlservice -n url
-sleep 60
+sleep 120
+echo "Scale up the load to see the hpa kicking in.."
+kubectl scale deployment.v1.apps/loadrunner --replicas=5 -n url
+sleep 120
 echo "Stop the load"
-
-
 kubectl delete -f k8s-run/test/loadrunner.yaml
 

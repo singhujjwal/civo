@@ -12,83 +12,107 @@ variable "CIVO_TOKEN" {
 }
 
 provider "civo" {
-  token = var.CIVO_TOKEN
+  token  = var.CIVO_TOKEN
   region = "LON1"
 }
 
 
 
 data "civo_instances_size" "large" {
-    filter {
-        key = "name"
-        values = ["g3.small"]
-        match_by = "re"
-    }
+  filter {
+    key      = "name"
+    values   = ["g3.large"]
+    match_by = "re"
+  }
 
-    filter {
-        key = "type"
-        values = ["instance"]
-    }
+  filter {
+    key    = "type"
+    values = ["instance"]
+  }
 
 }
 
 data "civo_dns_domain_name" "domain" {
-    name = "singhjee.in"
+  name = "singhjee.in"
 }
 
 
 resource "civo_dns_domain_record" "k8s" {
-    domain_id = data.civo_dns_domain_name.domain.id
-    type = "A"
-    name = "*.k8s.singhjee.in"
-    value = "72.11.11.11"
-    ttl = 600
-    depends_on = [civo_kubernetes_cluster.my-cluster]  
+  domain_id  = data.civo_dns_domain_name.domain.id
+  type       = "A"
+  name       = "*.k8s.singhjee.in"
+  value      = civo_kubernetes_cluster.my-cluster.master_ip
+  ttl        = 600
+  depends_on = [civo_kubernetes_cluster.my-cluster]
 }
 
 
 resource "civo_kubernetes_cluster" "my-cluster" {
-    name = "test"
-    applications = "Portainer,Nginx"
-    num_target_nodes = 3
-    target_nodes_size = element(data.civo_instances_size.large.sizes, 0).name
+  name              = "test"
+  applications      = "Longhorn,metrics-server,kafka,Nginx,Portainer,MongoDB:5GB"
+  num_target_nodes  = 3
+  target_nodes_size = element(data.civo_instances_size.large.sizes, 0).name
 
-
-
-    
-
-
-
-    provisioner "local-exec" {
-    command = "ls -latr"
-  }
-
-    provisioner "file" {
+  provisioner "file" {
     content     = civo_kubernetes_cluster.my-cluster.kubeconfig
-    destination = "~/kubeconfig"
+    destination = "/home/centos/.kube/config"
 
     connection {
-      type     = "ssh"
-      user     = "centos"
-      password = "Kube@321"
+      type        = "ssh"
+      user        = "centos"
       private_key = file("~/.ssh/id_rsa")
-      host     = "localhost"
+      host        = "localhost"
+      port        = 2222
     }
-
-
   }
+
+
+  provisioner "local-exec" {
+    command = "chmod go-r /home/centos/.kube/config"
+
+    connection {
+      type        = "ssh"
+      user        = "centos"
+      private_key = file("~/.ssh/id_rsa")
+      host        = "localhost"
+      port        = 2222
+    }
+  }
+
 }
 
 
-provider "kubernetes" {
-  load_config_file = false
-  host  = civo_kubernetes_cluster.my-cluster.api_endpoint
-  username = yamldecode(civo_kubernetes_cluster.my-cluster.kubeconfig).users[0].user.username
-  password = yamldecode(civo_kubernetes_cluster.my-cluster.kubeconfig).users[0].user.password
-  cluster_ca_certificate = base64decode(
-    yamldecode(civo_kubernetes_cluster.my-cluster.kubeconfig).clusters[0].cluster.certificate-authority-data
-  )
+// provider "kubernetes" {
+//   load_config_file = false
+//   host             = civo_kubernetes_cluster.my-cluster.api_endpoint
+//   username         = yamldecode(civo_kubernetes_cluster.my-cluster.kubeconfig).users[0].user.username
+//   password         = yamldecode(civo_kubernetes_cluster.my-cluster.kubeconfig).users[0].user.password
+//   cluster_ca_certificate = base64decode(
+//     yamldecode(civo_kubernetes_cluster.my-cluster.kubeconfig).clusters[0].cluster.certificate-authority-data
+//   )
+// }
+
+resource  "null_resource" "provisioning" {
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      chmod +x setup-cluster.sh
+      ./setup-cluster.sh
+    EOT
+
+    connection {
+      type        = "ssh"
+      user        = "centos"
+      private_key = file("~/.ssh/id_rsa")
+      host        = "localhost"
+      port        = 2222
+    }
+    working_dir = "${path.module}/.."
+  }
+
+  depends_on = [civo_kubernetes_cluster.my-cluster]
 }
+
 
 // resource "civo_network" "custom_net" {
 //     label = "ujjwal-home"
