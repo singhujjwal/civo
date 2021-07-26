@@ -5,6 +5,9 @@ chmod go-r ~/.kube/config
 
 CLUSTER_NAME="test"
 
+echo "Wait for 3 minutes to get cluster up fully..."
+sleep 180
+
 echo "Setting up the whole cluster "
 echo "Later just bootstrap the cluster and setup all components individually"
 
@@ -54,28 +57,35 @@ kubectl replace serviceaccount default -f k8s-run/url-serviceaccount.yaml -n url
 kubectl api-resources --verbs=list --namespaced -o name \
   | xargs -n 1 kubectl get --show-kind --ignore-not-found -n url
 
-#Create frontend resources
 
+
+echo "Setup a longhorn ingress........"
+kubectl apply -f longhorn/longhorn-ingress.yaml
+
+echo "Setup a Portainer ingress........"
+kubectl apply -f portainer/portainer-ingress.yaml
+
+
+#Create frontend resources
 kubectl apply -f k8s-run/frontend/
 
-sleep 60
+sleep 30
 # Create the consumer service
 
 kubectl apply -f k8s-run/db-mq/
 
-sleep 60
+sleep 30
 
 # run test
 kubectl apply -f k8s-run/test/loadrunner.yaml
 
-echo "Sleep for 1 minute"
-
+echo "Sleep for 2 minute"
 echo "Check for logs"
-kubectl logs -l app=urlservice -n url
 sleep 120
+kubectl logs -l app=urlservice -n url
 echo "Scale up the load to see the hpa kicking in.."
 kubectl scale deployment.v1.apps/loadrunner --replicas=5 -n url
-sleep 120
+sleep 180
 echo "Stop the load"
 kubectl delete -f k8s-run/test/loadrunner.yaml
 

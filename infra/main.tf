@@ -47,8 +47,15 @@ resource "civo_dns_domain_record" "k8s" {
 }
 
 
+resource "civo_ssh_key" "centos"{
+    name = "centos"
+    public_key = file("~/.ssh/id_rsa.pub")
+}
+
+
 resource "civo_kubernetes_cluster" "my-cluster" {
   name              = "test"
+  # applications      = "metrics-server,kafka,Nginx,Portainer,MongoDB:5GB"
   applications      = "Longhorn,metrics-server,kafka,Nginx,Portainer,MongoDB:5GB"
   num_target_nodes  = 3
   target_nodes_size = element(data.civo_instances_size.large.sizes, 0).name
@@ -109,7 +116,6 @@ resource  "null_resource" "provisioning" {
     }
     working_dir = "${path.module}/.."
   }
-
   depends_on = [civo_kubernetes_cluster.my-cluster]
 }
 
