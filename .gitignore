@@ -137,3 +137,5 @@ dmypy.json
 # .tfstate files
 *.tfstate
 *.tfstate.*
+*.terraform
+*.terraform.*
