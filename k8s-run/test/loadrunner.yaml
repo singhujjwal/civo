@@ -32,7 +32,7 @@ spec:
             apt update && apt install curl -y;
             echo -e "\n\n############# Get scripts...";
             cd /opt;
-            curl -# -O https://raw.githubusercontent.com/singhujjwal/civo/k8s/k8s-run/test.sh;
+            curl -# -O https://raw.githubusercontent.com/singhujjwal/civo/main/k8s-run/test.sh;
             chmod +x *.sh;
             ls -la;
             ./test.sh
