@@ -84,8 +84,13 @@ echo "Check for logs"
 sleep 120
 kubectl logs -l app=urlservice -n url
 echo "Scale up the load to see the hpa kicking in.."
-kubectl scale deployment.v1.apps/loadrunner --replicas=5 -n url
+kubectl scale deployment.v1.apps/loadrunner --replicas=3 -n url
+
+# HPA directly
+# kubectl autoscale deployment/urlconsumer --min=3 --max=6 --cpu-percent=80 -n url
 sleep 180
 echo "Stop the load"
+# instead of deleting scale down the deployment
 kubectl delete -f k8s-run/test/loadrunner.yaml
+kubectl scale deployment.v1.apps/loadrunner --replicas=0 -n url
 

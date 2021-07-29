@@ -1,0 +1,105 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: mongodb
+    pod-template-hash: 5b978c54ff
+  name: mongodb-5b978c54ff-jx4tj
+  namespace: default
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: mongodb-5b978c54ff
+    uid: 9686487b-992a-490b-8340-680f35d8ec23
+  resourceVersion: "2242"
+  uid: fa43bdb1-4bb4-476f-9eb9-a3b8573e066b
+spec:
+  containers:
+  - env:
+    - name: MONGO_INITDB_ROOT_USERNAME
+      value: YSUn24s8jUN7yTC7IrE2ggObyJMZ7p
+    - name: MONGO_INITDB_ROOT_PASSWORD
+      value: gwuypc9qB4zSgT7CzK77dPot4XhEpX
+    image: mongo:4.2.12
+    imagePullPolicy: IfNotPresent
+    name: mongodb
+    ports:
+    - containerPort: 27017
+      name: mongodb
+      protocol: TCP
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /data/db
+      name: mongodb-persistent-storage
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-zt5c8
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: k3s-test-43f04d50-node-pool-ea8b
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: mongodb-persistent-storage
+    persistentVolumeClaim:
+      claimName: mongodb-pv-claim
+  - name: default-token-zt5c8
+    secret:
+      defaultMode: 420
+      secretName: default-token-zt5c8
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2021-07-29T02:16:21Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2021-07-29T02:17:39Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2021-07-29T02:17:39Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2021-07-29T02:16:21Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://e8a4ae8451f3a7ec5d86181e1aab83466a81bc804d2d1c15fdeb8e4a7dc2154d
+    image: docker.io/library/mongo:4.2.12
+    imageID: docker.io/library/mongo@sha256:b4535cb164ef1f2f3144109e0d68070caab082b8deb3b1952536345000437700
+    lastState: {}
+    name: mongodb
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2021-07-29T02:17:38Z"
+  hostIP: 192.168.1.7
+  phase: Running
+  podIP: 10.42.2.18
+  podIPs:
+  - ip: 10.42.2.18
+  qosClass: BestEffort
+  startTime: "2021-07-29T02:16:21Z"
