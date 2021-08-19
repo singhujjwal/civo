@@ -1,3 +1,8 @@
+This is not a twelve factor app but it should be 
+
+https://12factor.net/
+https://12factor.net/codebase
+
 # URL shortener service
 Most popular interview question, although the logic is quite straight forward but trying it into code is not.
 It took me sometime to devote some time over here to setup components piece by piece.
